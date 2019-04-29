@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
+import Character from './Character';
 
 // To do Ajax in a React app:
 // 0. optional: install axios
@@ -13,31 +14,59 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      character: {}     // By default, set your state to an empty version of what you expect
+      pageNumber: 1,
+      characters: []     // By default, set your state to an empty version of what you expect
     };
   }
 
-  async componentDidMount() {
-    const response = await axios.get('https://my-little-cors-proxy.herokuapp.com/https://anapioficeandfire.com/api/characters/583');
-    console.log(response.data);
+  componentDidMount() {
+    console.log(`componentDidMount`);
+    this._getCharactersForPage();
+  }
+
+  render() {
+    console.log(`render!`);
+    return (
+      <div>
+        <button onClick={this._decrementPageNumber}>previous</button>
+        <button onClick={this._incrementPageNumber}>next</button>
+        {this.state.characters.map(c => <Character data={c}/>)}
+      </div>
+    );
+  }
+
+  _getCharactersForPage = async () => {
+    const response = await axios.get(`https://www.anapioficeandfire.com/api/characters?page=${this.state.pageNumber}&pageSize=10`);
+    // console.log(response.data);
+    console.log(`_getCharactersForPage`);
     this.setState({
-      character: response.data
+      characters: response.data
     }, () => {
       console.log('done setting state');
     });
   }
 
-  render() {
-    return (
-      <div>
-        <ul>
-          <li>name: {this.state.character.name}</li>
-          <li>born: {this.state.character.born}</li>
-          <li>culture: {this.state.character.culture}</li>
-        </ul>
-      </div>
-    );
+  _incrementPageNumber = () => {
+    console.log(`_incrementPageNumber`);
+    this.setState({
+      pageNumber: this.state.pageNumber + 1   
+    }, () => {
+      this._getCharactersForPage();
+    });
   }
+  _decrementPageNumber = () => {
+    console.log(`_decrementPageNumber`);
+    // let whatToChange = {
+    //   pageNumber: this.state.pageNumber - 1   
+    // };
+    // let whatToDoAfter = this._getCharactersForPage();
+    // this.setState(whatToChange, whatToDoAfter);    // equivalent alternative version to the one in _incrementPageNumber
+
+    this.setState({
+      pageNumber: this.state.pageNumber - 1   
+    }, this._getCharactersForPage);    // equivalent alternative version to the one in _incrementPageNumber
+  }
+
 }
 
 
