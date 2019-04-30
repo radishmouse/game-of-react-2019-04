@@ -20,9 +20,35 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    // 1. ^^^ What is this???
+    // - it's a "React Lifecycle Method" 
+    
+    // 2. When is it called?
+    // - it is called right after the very first .render()
+    
+    // 3. Who calls it?
+    // - React will call the method for you.
+    
+    // 4. When do I need it?
+    // - it's useful for starting timers (using setInterval or requestAnimationFrame)...
+    // - or if you're fetching data from an API to load to the component's state...
+    // - or any time you need to call .setState for the first time for a component.
+
+
     console.log(`componentDidMount`);
     this._getCharactersForPage();
   }
+
+  componentWillUnmount() {
+    // When does this get called?
+    // - If the component has already been drawn to the page
+    //   and it will no longer be drawn to the page, React will call this method for you
+    // - Examples: Using React Router to switch between "screens" or a ternary conditionally 
+    //   rendering a component.
+  }
+
+
+
 
   render() {
     console.log(`render!`);
